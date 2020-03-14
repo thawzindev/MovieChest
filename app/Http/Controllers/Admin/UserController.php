@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\User;
 use App\Filters\UserFilter;
 use Illuminate\Http\Request;
+use App\Library\MovieDB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->moviedb = new MovieDB;   
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -121,5 +128,11 @@ class UserController extends Controller
         $user->delete();
 
         return back();
+    }
+
+    public function test()
+    {
+        $data = $this->moviedb->test();
+        return $data;
     }
 }

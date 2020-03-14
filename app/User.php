@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -51,6 +52,11 @@ class User extends Authenticatable
     public function roleName() 
     {
         return collect(config('form.roles'))->firstWhere('value', $this->role)['name'];
+    }
+
+    public function posts() : HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id');
     }
 
     /**

@@ -6,6 +6,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Facebook;
 use App\User;
+use App\Exceptions\CustomException;
 
 class FacebookLoginMutator
 {
@@ -28,16 +29,30 @@ class FacebookLoginMutator
 
         try {
           // Returns a `Facebook\FacebookResponse` object
-          $response = $fb->get('/me?fields=id,name,birthday,picture', env('MY_FACEBOOK_TOKEN'));
+          $response = $fb->get('/me?fields=id,name,birthday,picture,age_range', $args['access_token']);
         } catch(Facebook\Exceptions\FacebookResponseException $e) {
-          echo 'Graph returned an error: ' . $e->getMessage();
+              throw new CustomException(
+                    422,
+                    $e->getMessage()
+                );
           exit;
         } catch(Facebook\Exceptions\FacebookSDKException $e) {
-          echo 'Facebook SDK returned an error: ' . $e->getMessage();
+              throw new CustomException(
+                        422,
+                        $e->getMessage()
+                    );
           exit;
         }
 
-        $user = $response->getGraphUser();  
+        $user = $response->getGraphUser();
+        // dd($user);
+        $checkExistedUser = User::where('fb_id', $user['id'])->first();
+
+        if ($checkExistedUser) {
+            $token = $checkExistedUser->createToken($user['name']);
+            $checkExistedUser['token'] = $token->plainTextToken;
+            return $checkExistedUser;
+          }  
 
         $newUser = User::create([
             'name'  => $user['name'],

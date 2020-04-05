@@ -4,7 +4,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/test', 'HomeController@test')->name('test');
 
 /**
  * CMS route.
@@ -17,6 +17,7 @@ Route::prefix(config('app.admin_prefix'))->group(function () // sample 'admin'
 		Route::resource('users', 'Admin\UserController', ['as' => 'admin']);
 		Route::get('/genre', 'GenreController@index');
 		Route::get('/movie', 'MovieController@index');
+		Route::get('/testing', 'Admin\UserController@testing');
 
 	});
 });

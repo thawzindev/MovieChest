@@ -60,6 +60,29 @@ class MovieDB
         return $obj;
     }
 
+    public function getCasts($movieID)
+    {
+        $client = new Client();
+        $key = env('MOVIEDB_KEY');
+
+        $response = $client->get("https://api.themoviedb.org/3/movie/$movieID/credits?api_key=$key&append_to_response=videos");
+        $obj = json_decode($response->getBody(), true);
+        // dd($obj);
+        return $obj;
+    }
+
+
+    public function searchByCastID($id)
+    {
+        $client = new Client();
+        $key = env('MOVIEDB_KEY');
+
+        $response = $client->get("https://api.themoviedb.org/3/person/$id?api_key=$key&append_to_response=credits");
+        $obj = json_decode($response->getBody(), true);
+        // dd($obj);
+        return $obj;
+    }
+
     public function getGenre()
     {
         $client = new Client();

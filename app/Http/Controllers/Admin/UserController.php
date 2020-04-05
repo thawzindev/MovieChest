@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use GuzzleHttp\Client;
 use App\User;
 use App\Filters\UserFilter;
 use Illuminate\Http\Request;
@@ -134,5 +135,23 @@ class UserController extends Controller
     {
         $data = $this->moviedb->test();
         return $data;
+    }
+
+    public function testing()
+    {
+        $client = new Client();
+        $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9hZGRfcGluX2NvZGUiLCJpYXQiOjE1ODQzMjgyMDksImV4cCI6MTU4NDU0NDIwOSwibmJmIjoxNTg0MzI4MjA5LCJqdGkiOiJnWnFNTVp2bXVwcVV6cDRkIiwic3ViIjozLCJwcnYiOiI4N2UwYWYxZWY5ZmQxNTgxMmZkZWM5NzE1M2ExNGUwYjA0NzU0NmFhIn0.SnvY-4C1xxQAe2GkBJkoTqcgBocaf_KgSGvKupvTZ5w";
+
+        $url = "localhost:8000/api/cash-in";
+
+        $response = $client->get($url,
+        [
+            'headers' => [
+                'Authorization' => 'bearer ' . $token,
+            ],
+        ]);
+
+        // $data = json_decode($response, true);
+        return $response;
     }
 }

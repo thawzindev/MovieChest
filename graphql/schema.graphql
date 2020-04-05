@@ -4,14 +4,55 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 "A date string with format `Y-m-d`, e.g. `2011-05-23`."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
-type Query {
-    # posts: [Post!]! @paginate
-    # post(id: Int! @eq): Post @find
-    # posts: [Post!]! @all
+type Query @middleware(checks: ["auth:sanctum"]) {
+    posts: [Post!]! @paginate
+    post(id: Int! @eq): Post @find
+    posts: [Post!]! @all 
     users: [User!]! @all
     genres: [Genre!]! @all
-    movies: [Movie!]! @all
+    casts: [Cast!]! @paginate
+    movies(from: String, to: String) : MoviePageInfo @field(resolver: "MovieQuery@addCount")
+    cast_detail(id: Int!) : CastDetail @field(resolver: "CastQuery@castDetail")
     movie(id: Int! @eq): Movie @find
+}
+
+
+type MoviePageInfo {
+  data: [Movie!]!
+  page: PageInfo
+}
+
+type CastDetail {
+    birthday: String!
+    known_for_department: String!
+    id: ID!
+    name: String!
+    biography: String!
+    place_of_birth: String!
+    profile_path: String!
+    homepage: String!
+    credits: Credits
+}
+
+type PageInfo {
+  currentPage: Int
+  count: Int
+}
+
+type Credits {
+    cast: [CastMovie]
+}
+
+type CastMovie {
+    title: String
+    poster_path: String
+    release_date: String
+    overview: String
+}
+
+type Cast {
+    id: ID!
+    name: String!
 }
 
 type User {
@@ -24,15 +65,15 @@ type User {
 }
 
 type Movie {
-    id : ID!
-    popularity: String!
-    poster_path: String!
-    moviedb_id: ID!
-    title: String!
-    vote_average: String!
-    overview: String!
-    release_date: String!
-    type: Int!
+    id : ID
+    popularity: String
+    poster_path: String
+    moviedb_id: ID
+    title: String
+    vote_average: String
+    overview: String
+    release_date: String
+    type: Int
     genres: [Genre!]! @belongsToMany
 }
 
@@ -42,25 +83,24 @@ type Genre {
     name: String!
 }
 
-# type Post {
-#     id: ID!
-#     title: String!
-#     content: String!
-#     writer: User! @belongsTo
-#     comments: [Comment!]! @hasMany
-# }
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    writer: User! @belongsTo
+    comments: [Comment!]! @hasMany
+}
 
-# type Comment {
-#     id: ID!
-#     reply: String!
-#     post: Post! @belongsTo
-# }
+type Comment {
+    id: ID!
+    reply: String!
+    post: Post! @belongsTo
+}
 
-# type Mutation {
-#   createUser(name: String!, email: String!, phone: Int!, password: String!) : User! @create
-# }
+type Mutation {
+  login(
+    email: String! 
+    password: String!
+  ): String @field(resolver: "App\\GraphQL\\Mutations\\LoginMutator@login")
+}
 
-
-# type Mutation {
-#   deleteUser(id: ID!) : User @delete
-# }

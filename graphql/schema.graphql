@@ -97,10 +97,20 @@ type Comment {
     post: Post! @belongsTo
 }
 
+type FbLoginResponse {
+    data: [facebookLogin]!
+}
+
+type facebookLogin {
+    id: ID!
+}
+
 type Mutation {
   login(
     email: String! 
     password: String!
   ): String @field(resolver: "App\\GraphQL\\Mutations\\LoginMutator@login")
+
+  facebookLogin(access_token: String!): FbLoginResponse @field(resolver: "FacebookLoginMutator@fbLogin")
 }
 
